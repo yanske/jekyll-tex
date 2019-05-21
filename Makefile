@@ -1,3 +1,6 @@
+build: ## Compile jekyll-tex gem
+	gem build jekyll-tex.gemspec 
+
 test: ## Run specs
 	bundle exec rspec
 

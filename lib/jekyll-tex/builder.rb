@@ -15,8 +15,11 @@ module Jekyll
 
         site_config = @site.config[CONFIG_KEY] || {}
         @config = default_config.merge!(site_config.transform_keys(&:to_sym))
+
         Dir.glob(File.join(@site.source, @config[:source]) + '/*.tex') do |path|
           tex = File.basename(path)
+
+          next unless update_pdf?(tex)
 
           build(tex)
           cleanup(tex)
@@ -26,7 +29,8 @@ module Jekyll
       private
 
       def update_pdf?(tex)
-        # Validate here that PDF is not up to date or does not exist
+        # TODO: Check if the PDF already exists and if it is up-to-date based on
+        # modified timestamp.
         true
       end
 
