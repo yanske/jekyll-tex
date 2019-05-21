@@ -24,11 +24,6 @@ describe(Jekyll::Tex::Builder) do
   end
 
   it "generates PDF file from tex" do
-    site.config["tex"] = {
-      "source": source_dir("assets/tex"),
-      "output": source_dir("assets"),
-    }
-
     site.process
 
     expect(File.exists?(source_dir(tex_path))).to be_truthy

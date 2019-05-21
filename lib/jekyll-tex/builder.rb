@@ -6,20 +6,20 @@ module Jekyll
       include Errors
 
       safe true
+      priority :lowest
 
       CONFIG_KEY = "tex".freeze
   
       def generate(site)
-        site_config = site.config[CONFIG_KEY] || {}
-        @config = default_config.merge!(site_config.transform_keys(&:to_sym))
+        @site = site
 
-        Dir.glob(@config[:source] + '/*.tex') do |path|
+        site_config = @site.config[CONFIG_KEY] || {}
+        @config = default_config.merge!(site_config.transform_keys(&:to_sym))
+        Dir.glob(File.join(@site.source, @config[:source]) + '/*.tex') do |path|
           tex = File.basename(path)
 
-          if update_pdf?(tex)
-            build(tex)
-            cleanup(tex)
-          end
+          build(tex)
+          cleanup(tex)
         end
       end
 
@@ -40,20 +40,19 @@ module Jekyll
       end
 
       def build(tex)
-        system @config[:builder], *@config[:options], File.join(@config[:source], tex)
+        system @config[:builder], *@config[:options], File.join(@site.source, @config[:source], tex)
 
-        pdf_path    = File.basename(tex, '.tex') + '.pdf'
-        target_path = File.join(@config[:output], pdf_path)
+        pdf_file    = File.basename(tex, '.tex') + '.pdf'
+        target_path = File.join(@site.source, @config[:output], pdf_file)
 
-        unless $?.exitstatus.zero? && File.exists?(File.basename(tex, '.tex') + '.pdf')
+        # The builder outputs the PDF file in the top level directory of the site. We need to
+        # move it to the source directory, and add it to the site's inventory.
+        unless $?.exitstatus.zero? && File.exists?(pdf_file)
           raise BuildError
         end
 
-        unless File.exists?(@config[:output])
-          raise OutputError
-        end
-
-        FileUtils.move pdf_path, target_path
+        FileUtils.move pdf_file, target_path
+        @site.static_files << StaticFile.new(@site, @site.source, @config[:output], pdf_file)
       end
 
       BUILD_EXT = %w(
