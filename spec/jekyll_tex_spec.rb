@@ -1,7 +1,7 @@
 require "spec_helper"
 
 describe(Jekyll::Tex::Builder) do
-  let(:config) do 
+  let(:config) do
     Jekyll.configuration({
       source: SOURCE_DIR,
       destination: DEST_DIR,

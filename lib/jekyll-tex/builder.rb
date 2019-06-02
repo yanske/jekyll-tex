@@ -4,11 +4,11 @@ module Jekyll
   module Tex
     class Builder < Jekyll::Generator
       safe true
-  
+
       def generate(site)
         @site = site
 
-        Dir.glob(File.join(@site.source, config[:source]) + '/*.tex') do |path|
+        Dir.glob(File.join(@site.source, config[:source]) + "/*.tex") do |path|
           tex = File.basename(path)
 
           next unless update_pdf?(tex)
@@ -23,10 +23,10 @@ module Jekyll
       CONFIG_KEY = "tex".freeze
 
       DEFAULT_CONFIG = {
-        builder: 'pdflatex',
-        options: ['--interaction=batchmode'],
-        source:  'assets/tex',
-        output:  'assets',
+        builder: "pdflatex",
+        options: ["--interaction=batchmode"],
+        source: "assets/tex",
+        output: "assets",
       }.freeze
 
       def config
@@ -41,7 +41,7 @@ module Jekyll
       end
 
       def target_path(tex)
-        pdf_file = File.basename(tex, '.tex') + '.pdf'
+        pdf_file = File.basename(tex, ".tex") + ".pdf"
         File.join(@site.source, config[:output], pdf_file)
       end
 
@@ -56,7 +56,7 @@ module Jekyll
       def build(tex)
         system config[:builder], *config[:options], source_path(tex)
 
-        pdf_file = File.basename(tex, '.tex') + '.pdf'
+        pdf_file = File.basename(tex, ".tex") + ".pdf"
 
         # The builder outputs the PDF file in the top level directory of the site. We need to
         # move it to the source directory, and add it to the site's inventory.
@@ -73,11 +73,11 @@ module Jekyll
         .log
         .out
       ).freeze
-  
-      BUILD_LOG = ['texput.log'].freeze
-  
+
+      BUILD_LOG = ["texput.log"].freeze
+
       def cleanup(tex)
-        targets = BUILD_EXT.map { |ext| File.basename(tex, '.tex') + ext } + BUILD_LOG
+        targets = BUILD_EXT.map { |ext| File.basename(tex, ".tex") + ext } + BUILD_LOG
         targets.each { |t| File.delete(t) if File.exist?(t) }
       end
     end
