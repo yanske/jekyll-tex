@@ -2,6 +2,10 @@
 
 Jekyll plugin to build PDF files from your Latex files.
 
+## Dependencies
+
+Use of this Gem requires `pdflatex`.
+
 ## Usage
 
 1. Add this Gem to your Gemfile.
