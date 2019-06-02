@@ -3,8 +3,6 @@ require "fileutils"
 module Jekyll
   module Tex
     class Builder < Jekyll::Generator
-      include Errors
-
       safe true
   
       def generate(site)
@@ -48,7 +46,7 @@ module Jekyll
       end
 
       def update_pdf?(tex)
-        return true unless File.exists?(target_path(tex))
+        return true unless File.exist?(target_path(tex))
 
         # Check if the file is up-to-date compared to the tex file. We
         # want to update if the PDF file is not as recently modified.
@@ -62,8 +60,8 @@ module Jekyll
 
         # The builder outputs the PDF file in the top level directory of the site. We need to
         # move it to the source directory, and add it to the site's inventory.
-        unless $?.exitstatus.zero? && File.exists?(pdf_file)
-          raise BuildError
+        unless $?.exitstatus.zero? && File.exist?(pdf_file)
+          raise "Build status 0 or file does not exist!"
         end
 
         FileUtils.move pdf_file, target_path(tex)
@@ -80,7 +78,7 @@ module Jekyll
   
       def cleanup(tex)
         targets = BUILD_EXT.map { |ext| File.basename(tex, '.tex') + ext } + BUILD_LOG
-        targets.each { |t| File.delete(t) if File.exists?(t) }
+        targets.each { |t| File.delete(t) if File.exist?(t) }
       end
     end
   end

@@ -16,6 +16,6 @@ RSpec.configure do |config|
   end
 
   def clean_file(file)
-    File.delete(file) if File.exists?(file)
+    File.delete(file) if File.exist?(file)
   end
 end
