@@ -14,4 +14,8 @@ RSpec.configure do |config|
   def dest_dir(*files)
     File.join(DEST_DIR, *files)
   end
+
+  def clean_file(file)
+    File.delete(file) if File.exists?(file)
+  end
 end

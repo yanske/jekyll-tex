@@ -19,8 +19,8 @@ describe(Jekyll::Tex::Builder) do
 
   after(:each) do
     # Clean up the tex_path used
-    File.delete source_dir(tex_path)
-    File.delete dest_dir(tex_path)
+    clean_file(source_dir(tex_path))
+    clean_file(dest_dir(tex_path))
   end
 
   it "generates PDF file from tex" do

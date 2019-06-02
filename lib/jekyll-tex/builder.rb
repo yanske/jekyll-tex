@@ -6,16 +6,11 @@ module Jekyll
       include Errors
 
       safe true
-
-      CONFIG_KEY = "tex".freeze
   
       def generate(site)
         @site = site
 
-        site_config = @site.config[CONFIG_KEY] || {}
-        @config = DEFAULT_CONFIG.merge(site_config.transform_keys(&:to_sym))
-
-        Dir.glob(File.join(@site.source, @config[:source]) + '/*.tex') do |path|
+        Dir.glob(File.join(@site.source, config[:source]) + '/*.tex') do |path|
           tex = File.basename(path)
 
           next unless update_pdf?(tex)
@@ -27,13 +22,29 @@ module Jekyll
 
       private
 
+      CONFIG_KEY = "tex".freeze
+
+      DEFAULT_CONFIG = {
+        builder: 'pdflatex',
+        options: ['--interaction=batchmode'],
+        source:  'assets/tex',
+        output:  'assets',
+      }.freeze
+
+      def config
+        @config ||= begin
+          site_config = @site.config[CONFIG_KEY] || {}
+          DEFAULT_CONFIG.merge(site_config.transform_keys(&:to_sym))
+        end
+      end
+
       def source_path(tex)
-        File.join(@site.source, @config[:source], tex)
+        File.join(@site.source, config[:source], tex)
       end
 
       def target_path(tex)
         pdf_file = File.basename(tex, '.tex') + '.pdf'
-        File.join(@site.source, @config[:output], pdf_file)
+        File.join(@site.source, config[:output], pdf_file)
       end
 
       def update_pdf?(tex)
@@ -44,16 +55,8 @@ module Jekyll
         File.mtime(target_path(tex)) < File.mtime(source_path(tex))
       end
 
-      # TODO: Make the constants class level.
-      DEFAULT_CONFIG = {
-        builder: 'pdflatex',
-        options: ['--interaction=batchmode'],
-        source:  'assets/tex',
-        output:  'assets',
-      }.freeze
-
       def build(tex)
-        system @config[:builder], *@config[:options], source_path(tex)
+        system config[:builder], *config[:options], source_path(tex)
 
         pdf_file = File.basename(tex, '.tex') + '.pdf'
 
@@ -64,7 +67,7 @@ module Jekyll
         end
 
         FileUtils.move pdf_file, target_path(tex)
-        @site.static_files << StaticFile.new(@site, @site.source, @config[:output], pdf_file)
+        @site.static_files << StaticFile.new(@site, @site.source, config[:output], pdf_file)
       end
 
       BUILD_EXT = %w(
