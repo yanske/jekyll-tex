@@ -1,4 +1,6 @@
 Gemfile.lock
-spec_build
 *.gem
 .byebug_history
+
+spec_build/
+**/.jekyll-cache/
