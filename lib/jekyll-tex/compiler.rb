@@ -40,13 +40,11 @@ module Jekyll
         cleanup(source)
       end
 
-      private
-
       WORKING_DIR = '/tmp'
       DEFAULT_OPTIONS = ['-halt-on-error', "-output-directory=#{WORKING_DIR}"].freeze
 
       def self.installed?
-        @@installed ||= begin
+        @installed ||= begin
           _, _, status = Open3.capture3('pdflatex -version')
           status.exitstatus.zero?
         end
