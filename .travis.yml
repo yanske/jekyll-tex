@@ -1,0 +1,20 @@
+language: ruby
+
+rvm:
+  - 2.5
+
+sudo: false
+
+before_script:
+  - gem install rubocop
+  - sudo apt-get install texlive-latex-base texlive-fonts-recommended texlive-fonts-extra texlive-latex-extra
+
+script:
+  - bundle exec rspec
+  - rubocop
+  - gem build jekyll-tex.gemspec
+
+cache: bundler
+
+notifications:
+  email: false
